@@ -1,0 +1,243 @@
+/* Varsha Yadwankar — Packaging Design Portfolio
+   Desktop (>=1024px): the original 1440px design grid scales fluidly to the full
+   viewport width (1 design px = var(--u)), so there is no empty band at the sides.
+   Below 1024px everything reflows into a single stacked column. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --ink: #000;
+  --link: #0099ff;
+  --bg: #fff;
+  --serif: "Marko One", Georgia, serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img, video, svg { display: block; max-width: none; }
+a { color: var(--link); text-decoration: none; }
+h1, h2, h3, p { margin: 0; font-weight: inherit; }
+
+.skip {
+  position: absolute; left: -9999px; top: 8px; z-index: 999;
+  background: var(--ink); color: #fff; padding: 8px 14px; font-size: 14px;
+}
+.skip:focus { left: 8px; }
+
+:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+
+/* ---------- Header ---------- */
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.site-title { font-family: var(--serif); color: var(--ink); white-space: nowrap; }
+.site-nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
+.site-nav a {
+  font-family: var(--serif);
+  color: var(--link);
+  position: relative;
+  padding: 4px 0;
+  transition: color .2s ease;
+}
+.site-nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left; transition: transform .3s ease;
+}
+.site-nav a:hover::after, .site-nav a[aria-current="page"]::after { transform: scaleX(1); }
+
+/* ---------- Typography ---------- */
+.hello { font-family: var(--serif); }
+.display { font-weight: 600; }
+.eyebrow { font-weight: 500; letter-spacing: .05em; text-transform: uppercase; }
+.title { font-weight: 600; text-transform: uppercase; }
+.tags { font-weight: 500; letter-spacing: .02em; text-transform: uppercase; white-space: pre-wrap; }
+.body { font-weight: 500; letter-spacing: .05em; }
+.lead { font-weight: 400; }
+.label { font-weight: 500; letter-spacing: .02em; text-transform: uppercase; }
+.cta { font-weight: 500; display: inline-block; }
+.cta .arr { display: inline-block; transition: transform .3s ease; }
+.cta:hover .arr { transform: translateY(4px); }
+
+.list .role { font-weight: 600; letter-spacing: .05em; }
+.list .sub { font-weight: 500; letter-spacing: .05em; }
+.list .desc { font-weight: 400; letter-spacing: .05em; }
+
+.contact-list dt { font-weight: 600; letter-spacing: .05em; }
+.contact-list dd { margin: 0; font-weight: 500; letter-spacing: .02em; }
+.contact-list a { color: var(--ink); background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s ease, color .2s; word-break: break-word; }
+.contact-list a:hover { color: var(--link); background-size: 100% 1px; }
+
+.pager { display: flex; justify-content: center; align-items: center; gap: 4px; }
+.pager a { color: var(--link); white-space: nowrap; transition: opacity .2s; }
+.pager a:hover { opacity: .65; }
+.pager .next .arr { display: inline-block; transition: transform .3s ease; }
+.pager .next:hover .arr { transform: translateX(4px); }
+
+.media { background: transparent; }
+.fit-cover { object-fit: cover; }
+.fit-contain { object-fit: contain; }
+.fit-fill { object-fit: fill; }
+
+/* ---------- Desktop: fluid design canvas ---------- */
+@media (min-width: 1024px) {
+  body { --u: calc(var(--vw, 100vw) / 1440); }
+
+  .canvas {
+    position: relative;
+    width: 100%;
+    height: calc(var(--H) * var(--u));
+  }
+  .sec { display: contents; }
+
+  .a {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
+    z-index: var(--z, 1);
+  }
+  img.a, video.a { height: calc(var(--h) * var(--u)); }
+  .txt { z-index: 50; }
+
+  .site-header {
+    position: absolute; z-index: 60;
+    top: calc(39 * var(--u)); left: calc(73 * var(--u)); right: calc(87 * var(--u));
+    height: calc(28 * var(--u));
+  }
+  .site-title { font-size: max(16px, calc(22 * var(--u))); line-height: 1.2; }
+  .site-nav ul { gap: calc(48 * var(--u)); }
+  .site-nav a { font-size: max(13px, calc(16 * var(--u))); line-height: 1.2; }
+
+  .hello { font-size: max(16px, calc(22 * var(--u))); line-height: 1.2; }
+  .display { font-size: calc(64 * var(--u)); line-height: 1.2; white-space: nowrap; }
+  .lead { font-size: max(14px, calc(18 * var(--u))); line-height: 1.2; }
+  .cta { font-size: max(13px, calc(16 * var(--u))); line-height: 1.2; }
+  /* Home hero = exactly one screen. Widths (header, margins, line drawing) scale with
+     the screen width so everything reaches both edges; the hero text and vertical
+     spacing use --uh, which also respects the screen height, so nothing is pushed
+     below the fold on wide 16:9 monitors. The drawing and CTA sit on the bottom edge,
+     as in the Framer version. At 1440x900 both units are 1 (the original design). */
+  .home {
+    --hh: max(100vh, calc(660 * var(--u)));
+    --uh: min(var(--u), calc(var(--hh) / 900));
+  }
+  @supports (height: 100svh) {
+    .home { --hh: max(100svh, calc(660 * var(--u))); }
+  }
+  .home .canvas { height: var(--hh); }
+  .home .hero-text { top: calc(152 * var(--uh)); }
+  .home .hello { font-size: max(16px, calc(22 * var(--uh))); }
+  .home .display { font-size: calc(64 * var(--uh)); margin-top: calc(82.6 * var(--uh)); }
+  .home .lead { font-size: max(14px, calc(18 * var(--uh))); margin-top: calc(10.4 * var(--uh)); }
+  .home .cta { font-size: max(13px, calc(16 * var(--uh))); }
+  .home .cta-block { top: auto; bottom: calc(271 * var(--uh)); }
+  .home .decor.keep { top: auto; bottom: calc(59 * var(--uh)); }
+
+  .eyebrow { font-size: max(11px, calc(14 * var(--u))); line-height: 1.2; }
+  .title { font-size: calc(48 * var(--u)); line-height: 1.2; white-space: nowrap; margin-top: calc(23.2 * var(--u)); }
+  .eyebrow + .tags { margin-top: 0; }
+  .tags { font-size: max(10.5px, calc(13 * var(--u))); line-height: 1.2; white-space: nowrap; margin-top: calc(32.4 * var(--u)); }
+  .body { font-size: max(13px, calc(16 * var(--u))); line-height: 1.5; width: calc(var(--bw, 460) * var(--u)); margin-top: calc(22.4 * var(--u)); }
+  .label { font-size: max(11px, calc(14 * var(--u))); line-height: 1.2; white-space: nowrap; }
+
+  /* about / contact headings sit directly on their grid line */
+  .txt > .title:first-child { margin-top: 0; }
+  .about-intro .body { margin-top: calc(40.4 * var(--u)); }
+
+  .list .title { margin: 0 0 calc(40 * var(--u)); }
+  .list .item + .item { margin-top: var(--gap, calc(74 * var(--u))); }
+  .list p { font-size: max(13px, calc(16 * var(--u))); line-height: 1.5; }
+  .list .sub { margin-top: calc(19 * var(--u)); }
+  .list .desc { margin-top: calc(9 * var(--u)); }
+  .list .role + .desc { margin-top: calc(19 * var(--u)); }
+
+  .contact-list { margin: calc(59 * var(--u)) 0 0; }
+  .contact-list dt, .contact-list dd { font-size: max(13px, calc(16 * var(--u))); line-height: 1.5; }
+  .contact-list dd { margin: calc(19 * var(--u)) 0 calc(54 * var(--u)); }
+  .contact-intro .body { width: calc(460 * var(--u)); margin-top: calc(20 * var(--u)); }
+
+  .pager { left: 0; width: 100%; }
+  .pager a { font-size: max(13px, calc(16 * var(--u))); line-height: 1.2; }
+}
+
+/* ---------- Tablet & mobile: stacked flow ---------- */
+@media (max-width: 1023.98px) {
+  :root { --pad: clamp(20px, 6vw, 48px); }
+
+  .canvas { padding: 0 var(--pad) 72px; }
+  .site-header { padding: 28px 0 8px; flex-wrap: wrap; row-gap: 14px; }
+  .site-title { font-size: 19px; }
+  .site-nav ul { gap: 26px; }
+  .site-nav a { font-size: 14px; }
+
+  .sec { display: flex; flex-direction: column; gap: 22px; padding-top: 72px; position: relative; }
+  .sec:first-of-type { padding-top: 40px; }
+  .a { position: static; width: 100%; }
+  img.a, video.a { height: auto; }
+  .media { order: 2; }
+  .txt { order: 1; }
+
+  .hello { font-size: 18px; }
+  .display { font-size: clamp(34px, 7.4vw, 56px); line-height: 1.15; margin-top: 28px; }
+  .lead { font-size: 16px; line-height: 1.45; margin-top: 22px; max-width: 34em; }
+  .cta { font-size: 15px; margin-top: 30px; }
+  .br-d { display: none; }
+
+  .eyebrow { font-size: 12px; }
+  .title { font-size: clamp(28px, 6.4vw, 44px); line-height: 1.15; margin-top: 14px; }
+  .txt > .title:first-child { margin-top: 0; }
+  .tags { font-size: 11.5px; line-height: 1.6; margin-top: 18px; }
+  .body { font-size: 15px; line-height: 1.6; margin-top: 16px; max-width: 36em; }
+  .label { font-size: 12px; margin-top: 18px; order: 2; }
+
+  .media.fit-cover { aspect-ratio: var(--w) / var(--h); }
+  video.media { aspect-ratio: 1440 / 686; object-fit: cover; }
+
+  /* keep a few signature line drawings as full-bleed dividers, drop the small ones */
+  .decor { display: none; }
+  .decor.keep { display: block; order: 3; width: calc(100% + 2 * var(--pad)); max-width: none; margin: 8px calc(-1 * var(--pad)) 0; height: auto; }
+
+  .home .sec { min-height: auto; }
+  .home .decor.keep { order: 3; margin-top: 36px; }
+
+  .cols { display: grid; gap: 56px; }
+  .list .title { margin-bottom: 26px; }
+  .list .item + .item { margin-top: 30px; }
+  .list p { font-size: 15px; line-height: 1.55; }
+  .list .sub, .list .role + .desc { margin-top: 6px; }
+  .list .desc { margin-top: 4px; }
+
+  .contact-list { margin: 36px 0 0; }
+  .contact-list dt, .contact-list dd { font-size: 15px; line-height: 1.5; }
+  .contact-list dd { margin: 8px 0 28px; }
+
+  .pager { padding: 72px 0 0; flex-wrap: wrap; }
+  .pager a { font-size: 14px; }
+}
+
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .cols { grid-template-columns: 1fr 1fr; gap: 48px; }
+  .cols > .txt { order: 0; }
+}
+
+/* ---------- Motion ---------- */
+.js .rv { opacity: 0; translate: 0 24px; transition: opacity .9s cubic-bezier(.2,.7,.2,1), translate .9s cubic-bezier(.2,.7,.2,1); }
+.js .rv.in { opacity: 1; translate: 0 0; }
+.js .decor { opacity: 0; transition: opacity 1.6s ease .15s; }
+.js .decor.in { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .rv, .js .decor { opacity: 1; translate: none; transition: none; }
+}
