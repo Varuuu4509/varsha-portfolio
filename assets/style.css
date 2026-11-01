@@ -85,7 +85,15 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
 .pager .next:hover .arr { transform: translateX(4px); }
 
 .media { background: transparent; }
+/* Line drawings bleed past the screen edges and trimmed artworks carry transparent
+   margins: clip them at the page so they never widen the page (no sideways pan or
+   zoom-out on phones). */
+.canvas { overflow-x: hidden; overflow-x: clip; }
 .fit-cover { object-fit: cover; }
+/* The line-walk animation runs along the bottom of the frame: crop the empty top, never the bottom. */
+video.fit-cover { object-position: center bottom; }
+/* This artwork's file is stored sideways; the Framer layer was rotated 90° clockwise. */
+.rot-90 { rotate: 90deg; }
 .fit-contain { object-fit: contain; }
 .fit-fill { object-fit: fill; }
 
@@ -129,11 +137,11 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
      below the fold on wide 16:9 monitors. The drawing and CTA sit on the bottom edge,
      as in the Framer version. At 1440x900 both units are 1 (the original design). */
   .home {
-    --hh: max(100vh, calc(660 * var(--u)));
+    --hh: max(100vh, calc(680 * var(--u)));
     --uh: min(var(--u), calc(var(--hh) / 900));
   }
   @supports (height: 100svh) {
-    .home { --hh: max(100svh, calc(660 * var(--u))); }
+    .home { --hh: max(100svh, calc(680 * var(--u))); }
   }
   .home .canvas { height: var(--hh); }
   .home .hero-text { top: calc(152 * var(--uh)); }
@@ -142,7 +150,13 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
   .home .lead { font-size: max(14px, calc(18 * var(--uh))); margin-top: calc(10.4 * var(--uh)); }
   .home .cta { font-size: max(13px, calc(16 * var(--uh))); }
   .home .cta-block { top: auto; bottom: calc(271 * var(--uh)); }
-  .home .decor.keep { top: auto; bottom: calc(59 * var(--uh)); }
+  /* Normally 59 design px above the bottom edge; on short, wide screens (laptops with
+     browser toolbars) it moves closer to the bottom so the top of the drawing always
+     keeps clear of the menu (its top stays at least 105 design px below the page top). */
+  .home .decor.keep {
+    top: auto;
+    bottom: max(0px, min(calc(59 * var(--uh)), calc(var(--hh) - 668 * var(--u))));
+  }
 
   .eyebrow { font-size: max(11px, calc(14 * var(--u))); line-height: 1.2; }
   .title { font-size: calc(48 * var(--u)); line-height: 1.2; white-space: nowrap; margin-top: calc(23.2 * var(--u)); }
@@ -204,12 +218,35 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
   .media.fit-cover { aspect-ratio: var(--w) / var(--h); }
   video.media { aspect-ratio: 1440 / 686; object-fit: cover; }
 
+  /* Many artworks sit on large transparent canvases (they overlap on desktop). Stacked on a
+     phone that padding becomes big empty gaps, so frame each one on its real content:
+     --nw/--nh = file size, --cl/--ct/--cw/--ch = content box measured from the file.
+     The content fills the column width, capped so tall packs stay within ~62% of the screen. */
+  .media.trim {
+    --Dw: min(100%, calc(62vh * var(--cw) / var(--ch)));
+    width: calc(var(--Dw) * var(--nw) / var(--cw));
+    max-width: none;
+    margin-left: calc((100% - var(--Dw)) / 2 - var(--Dw) * var(--cl) / var(--cw));
+    margin-top: calc(var(--Dw) * var(--ct) / var(--cw) * -1);
+    margin-bottom: calc(var(--Dw) * (var(--nh) - var(--ct) - var(--ch)) / var(--cw) * -1);
+    clip-path: inset(calc(var(--ct) / var(--nh) * 100%) calc((var(--nw) - var(--cl) - var(--cw)) / var(--nw) * 100%) calc((var(--nh) - var(--ct) - var(--ch)) / var(--nh) * 100%) calc(var(--cl) / var(--nw) * 100%));
+  }
+
   /* keep a few signature line drawings as full-bleed dividers, drop the small ones */
   .decor { display: none; }
   .decor.keep { display: block; order: 3; width: calc(100% + 2 * var(--pad)); max-width: none; margin: 8px calc(-1 * var(--pad)) 0; height: auto; }
 
-  .home .sec { min-height: auto; }
-  .home .decor.keep { order: 3; margin-top: 36px; }
+  /* Home: the first screen fills the phone, with the line drawing enlarged (k x screen
+     width), centred on the packaging and pinned to the bottom; the line still runs off
+     both edges. */
+  .home .canvas { display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; padding-bottom: 28px; }
+  .home .sec { flex: 1 0 auto; }
+  .home .decor.keep {
+    --k: 1.9; --off: -0.8585;
+    order: 3;
+    width: calc((100% + 2 * var(--pad)) * var(--k));
+    margin: auto 0 0 calc(-1 * var(--pad) + (100% + 2 * var(--pad)) * var(--off));
+  }
 
   .cols { display: grid; gap: 56px; }
   .list .title { margin-bottom: 26px; }
@@ -229,6 +266,7 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
 @media (min-width: 640px) and (max-width: 1023.98px) {
   .cols { grid-template-columns: 1fr 1fr; gap: 48px; }
   .cols > .txt { order: 0; }
+  .home .decor.keep { --k: 1.35; --off: -0.465; }
 }
 
 /* ---------- Motion ---------- */
